@@ -1,40 +1,50 @@
-//def gitCommit() {
-  //  sh "git rev-parse HEAD > GIT_COMMIT"
-    //def gitCommit = readFile('GIT_COMMIT').trim()
-    //sh "rm -f GIT_COMMIT" this is for reviewboard
-    //return gitCommit,,
-//}
+def gitCommit() {
+    sh "git rev-parse HEAD > GIT_COMMIT"
+    def gitCommit = readFile('GIT_COMMIT').trim()
+    sh "rm -f GIT_COMMIT"
+    return gitCommit
+}
 
-import java.text.SimpleDateFormat
-jobName = "WebApp"
-def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
-def date = new Date()
-def timestamp = dateFormat.format(date).toString()
-
-def status= true
-def TicketNumber
-def output
-def comment
-def result
-def err
-def buildstatus
-def committerEmail
 node {
 
-   stage ('Install_Requirements') {
-            steps {
-                sh """
-                    echo ${SHELL}
-                    [ -d venv ] && rm -rf venv
-                    #virtualenv --python=python2.7 venv
-                    virtualenv venv
-                    #. venv/bin/activate
-                    export PATH=${VIRTUAL_ENV}/bin:${PATH}
-                    pip install --upgrade pip
-                    pip install -r requirements.txt -r dev-requirements.txt
-                    make clean
-                """
-            }
-        }
+    // Checkout source code from Git
+    stage 'Checking out scm for repository'
+    checkout scm
+    //stage '(TEST) unit/integration testing'
+    //sh 'make test'
+    stage '(BUILD) building image'
+    sh """
+       echo ${SHELL}
+       [ -d venv ] && rm -rf venv
+       #virtualenv --python=python2.7 venv
+       virtualenv venv
+       #. venv/bin/activate
+       export PATH=${VIRTUAL_ENV}/bin:${PATH}
+       pip install --upgrade pip
+       pip install -r requirements.txt -r dev-requirements.txt
+       make clean
+       """  
+    sh "docker build -t vishaldenge/dockerblog:${gitCommit()} ."
+    sh "docker login -u vishaldenge -p 'v!sh@l123' "
+    stage '(PUBLISH) Pushing the image '
+    sh "docker push vishaldenge/dockerblog:${gitCommit()}"
+     stage '(DEPLOY) Deploying the container'
+    marathon(
+       url: 'http://10.0.0.33:8080',
+        forceUpdate: true,
+        filename: 'marathon.json',
+        appId: 'blog',
+        docker: "vishaldenge/dockerblog:${gitCommit()}".toString()
+    )
+   
+        stage 'Collect test reports'
+        
+         sh 'touch reports/*.xml'
+         junit '**/reports/*.xml'
+       // step([$class: 'JUnitResultArchiver', testResults: '**/reports/*.xml'])
+        stage 'Clean up'
+       
+                         
+   
 
 }
