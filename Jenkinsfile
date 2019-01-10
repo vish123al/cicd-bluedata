@@ -19,7 +19,7 @@ node {
     sh "docker push vishaldenge/dockerblog:${gitCommit()}"
      stage '(DEPLOY) Deploying the container'
     stage 'wb'
-    sh "./hello-world.wb"
+    sh "./helloworld-app.wb"
      
 
 }
