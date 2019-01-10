@@ -1,33 +1,27 @@
-#!/usr/bin/env groovy
+//def gitCommit() {
+  //  sh "git rev-parse HEAD > GIT_COMMIT"
+    //def gitCommit = readFile('GIT_COMMIT').trim()
+    //sh "rm -f GIT_COMMIT" this is for reviewboard
+    //return gitCommit,,
+//}
 
-/**
- * Jenkinsfile
- */
-pipeline {
-    agent any
-    options {
-        buildDiscarder(
-            // Only keep the 10 most recent builds
-            logRotator(numToKeepStr:'10'))
-    }
-    environment {
-        projectName = 'ProjectTemplate'
-        emailTo = 'jere@arista.com'
-        emailFrom = 'eosplus-dev+jenkins@arista.com'
-        VIRTUAL_ENV = "${env.WORKSPACE}/venv"
-    }
+import java.text.SimpleDateFormat
+jobName = "WebApp"
+def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
+def date = new Date()
+def timestamp = dateFormat.format(date).toString()
 
-    stages {
+def status= true
+def TicketNumber
+def output
+def comment
+def result
+def err
+def buildstatus
+def committerEmail
+node {
 
-        /*
-        stage ('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        */
-
-        stage ('Install_Requirements') {
+   stage ('Install_Requirements') {
             steps {
                 sh """
                     echo ${SHELL}
@@ -42,6 +36,5 @@ pipeline {
                 """
             }
         }
-        
-    }
+
 }
