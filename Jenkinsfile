@@ -13,8 +13,8 @@ node {
     //stage '(TEST) unit/integration testing'
     //sh 'make test'
     stage '(BUILD) building image'
+    sh 'add-apt-repository ppa:ubuntu-toolchain-r/test'
     sh "apt-get install -y python-pip"
-    sh 'add-apt-repository ppa:ubuntu-toolchain-r/tes'
     sh "docker build -t vishaldenge/dockerblog:${gitCommit()} ."
     sh "docker login -u vishaldenge -p 'v!sh@l123' "
     stage '(PUBLISH) Pushing the image '
