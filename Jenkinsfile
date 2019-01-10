@@ -14,7 +14,7 @@ node {
     //sh 'make test'
     stage '(BUILD) building image'
     sh """
-       echo ${SHELL}
+       //echo ${SHELL}
        [ -d venv ] && rm -rf venv
        #virtualenv --python=python2.7 venv
        virtualenv venv
