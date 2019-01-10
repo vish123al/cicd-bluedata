@@ -13,13 +13,7 @@ node {
     //stage '(TEST) unit/integration testing'
     //sh 'make test'
     stage '(BUILD) building image'
-    sh """#!/usr/bin/env bash
-                    set -xe
-                    export PATH="/usr/local/bin:\${PATH}"
-                    pip install --upgrade pip
-                    pip install mypy
-                    mypy clkhash --ignore-missing-imports --no-implicit-optional --disallow-untyped-calls
-                """
+    sh "apt-get install -y python-pip"
     sh "docker build -t vishaldenge/dockerblog:${gitCommit()} ."
     sh "docker login -u vishaldenge -p 'v!sh@l123' "
     stage '(PUBLISH) Pushing the image '
