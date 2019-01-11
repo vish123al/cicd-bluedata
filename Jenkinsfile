@@ -13,7 +13,6 @@ node {
     //stage '(TEST) unit/integration testing'
     //sh 'make test'
     stage '(BUILD) building image'
-    sh 'ARG docker_gid=993'
     sh 'addgroup -g $docker_gid docker && addgroup docker docker'
     sh "docker build -t vishaldenge/dockerblog:${gitCommit()} ."
     sh "docker login -u vishaldenge -p 'v!sh@l123' "
