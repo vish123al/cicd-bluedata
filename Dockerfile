@@ -12,5 +12,3 @@ RUN pip install --upgrade setuptools
 RUN pip install --upgrade requests
 RUN pip install --upgrade argparse
 RUN pip install --upgrade bdworkbench
-RUN chmod 777 /helloworld-app.wb
-RUN ./helloworld-app.wb
